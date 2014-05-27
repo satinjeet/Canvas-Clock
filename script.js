@@ -323,7 +323,7 @@
         case "numbers_b":
           return "res/number_bound.jpg";
         default:
-          return "res/roman.png";
+          return "res/roman_small.png";
       }
     };
 

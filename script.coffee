@@ -177,7 +177,7 @@ class window.Clock
             when "numbers_b"
                 return "res/number_bound.jpg"
             else
-                return "res/roman.png"
+                return "res/roman_small.png"
 
     readyImage: =>
         @ready = true
