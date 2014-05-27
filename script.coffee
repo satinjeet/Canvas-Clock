@@ -47,12 +47,14 @@ class ClockMaths
         can.context.lineTo(end.x, end.y)
         can.context.stroke()
 
-class Seconds extends ClockMaths
+class Needles extends ClockMaths
     value: 0
     origin: null
     radius: null
     angle: 0
     width: 1
+
+class Seconds extends Needles
 
     constructor: (@origin, @radius, @value = 0)->
         @angle -= @value * 6
@@ -65,8 +67,7 @@ class Seconds extends ClockMaths
         b = @CalculateSecondVertex @origin, @radius, @angle
         @drawLine a, b, @width
 
-class Minutes extends Seconds
-
+class Minutes extends Needles
     width: 3
 
     constructor: (@origin, @radius, @value = 0)->
@@ -75,13 +76,23 @@ class Minutes extends Seconds
 
     angleUpdate: =>
         @angle -= 6
-
+        can.trigger can.events.h
     update: =>
         if @angle == -360
             @angle = 0
         b = @CalculateSecondVertex @origin, @radius, @angle
         @drawLine a, b, @width
 
+class Hours extends Minutes
+
+    width: 3
+
+    constructor: (@origin, @radius, @hourPassed, @minutePassed)->
+        @angle -= (@hourPassed * 30 + @minutePassed * 0.5)
+        can.on can.events.h, @angleUpdate
+
+    angleUpdate: =>
+        @angle -= 0.5
 
 initCanvas = ->
     window.can = new CanvasH
@@ -90,6 +101,7 @@ update = ->
     can.element.width = can.element.width;
     seconds.update()
     minutes.update()
+    hours.update()
 
 window.addEventListener 'load', ->
     initCanvas()
@@ -97,8 +109,8 @@ window.addEventListener 'load', ->
     d = new Date
     window.seconds = new Seconds a, 100, d.getSeconds()
     window.minutes = new Minutes a, 100, d.getMinutes()
+    window.hours = new Hours a, 70, d.getHours(), d.getMinutes()
     
-    seconds.update()
-    minutes.update()
+    update()
 
     setInterval(update, 1000);
