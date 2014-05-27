@@ -61,10 +61,13 @@ class ClockMaths
         return t
 
     drawLine: (start, end, width = 1)->
+        can.context.shadowBlur = width;
+        can.context.shadowColor="black";
         can.context.lineWidth = width
         can.context.beginPath()
         can.context.moveTo(start.x, start.y)
         can.context.lineTo(end.x, end.y)
+        can.context.strokeStyle = @color;
         can.context.stroke()
 
 class Needles extends ClockMaths
@@ -73,6 +76,7 @@ class Needles extends ClockMaths
     radius: null
     angle: 0
     width: 1
+    color: '#000000'
 
     events:
         minutePassed: "minutePassed"
@@ -99,6 +103,7 @@ class Seconds extends Needles
 
 class Minutes extends Needles
     width: 3
+    color: '#522900'
 
     constructor: (@origin, @radius, @value = 0)->
         @angle -= @value * 6
@@ -116,6 +121,7 @@ class Minutes extends Needles
 class Hours extends Minutes
 
     width: 3
+    color: '#295266'
 
     constructor: (@origin, @radius, @hourPassed, @minutePassed)->
         @angle -= ((@hourPassed % 12) * 30 + @minutePassed * 0.5)
@@ -130,7 +136,7 @@ class Clock
     needles: {}
 
     constructor: ->
-        @init()
+        window.addEventListener 'load', @init
 
     init: =>
         window.can = new CanvasH
@@ -142,8 +148,8 @@ class Clock
         @needles.seconds = new Seconds a, 100, d.getSeconds()
         @needles.minutes = new Minutes a, 100, d.getMinutes()
         @needles.hours = new Hours a, 70, d.getHours(), d.getMinutes()
-        @update
-        
+        @update()
+        setInterval @update, 1000
 
     readyImage: =>
         @ready = true
@@ -159,7 +165,5 @@ class Clock
     clear: =>
         can.element.width = can.element.width;
 
-window.addEventListener 'load', ->
-    window.clock = new Clock
-
-    setInterval(clock.update, 1000);
+window.clock = new Clock
+    

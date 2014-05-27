@@ -112,10 +112,13 @@ ClockMaths = (function() {
     if (width == null) {
       width = 1;
     }
+    can.context.shadowBlur = width;
+    can.context.shadowColor = "black";
     can.context.lineWidth = width;
     can.context.beginPath();
     can.context.moveTo(start.x, start.y);
     can.context.lineTo(end.x, end.y);
+    can.context.strokeStyle = this.color;
     return can.context.stroke();
   };
 
@@ -141,6 +144,8 @@ Needles = (function(_super) {
   Needles.prototype.angle = 0;
 
   Needles.prototype.width = 1;
+
+  Needles.prototype.color = '#000000';
 
   Needles.prototype.events = {
     minutePassed: "minutePassed",
@@ -190,6 +195,8 @@ Minutes = (function(_super) {
 
   Minutes.prototype.width = 3;
 
+  Minutes.prototype.color = '#522900';
+
   function Minutes(origin, radius, value) {
     this.origin = origin;
     this.radius = radius;
@@ -223,6 +230,8 @@ Hours = (function(_super) {
 
   Hours.prototype.width = 3;
 
+  Hours.prototype.color = '#295266';
+
   function Hours(origin, radius, hourPassed, minutePassed) {
     this.origin = origin;
     this.radius = radius;
@@ -253,7 +262,7 @@ Clock = (function() {
     this.update = __bind(this.update, this);
     this.readyImage = __bind(this.readyImage, this);
     this.init = __bind(this.init, this);
-    this.init();
+    window.addEventListener('load', this.init);
   }
 
   Clock.prototype.init = function() {
@@ -267,7 +276,8 @@ Clock = (function() {
     this.needles.seconds = new Seconds(a, 100, d.getSeconds());
     this.needles.minutes = new Minutes(a, 100, d.getMinutes());
     this.needles.hours = new Hours(a, 70, d.getHours(), d.getMinutes());
-    return this.update;
+    this.update();
+    return setInterval(this.update, 1000);
   };
 
   Clock.prototype.readyImage = function() {
@@ -292,7 +302,4 @@ Clock = (function() {
 
 })();
 
-window.addEventListener('load', function() {
-  window.clock = new Clock;
-  return setInterval(clock.update, 1000);
-});
+window.clock = new Clock;
