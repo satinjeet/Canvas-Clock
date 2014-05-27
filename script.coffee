@@ -22,12 +22,14 @@ class Drag
 class CanvasH
     context: null
     element: null
+    container: null
 
     constructor: ->
+        @container = document.getElementById("clock")
         @element = document.getElementById("myCanvas")
         @context = @element.getContext("2d")
         dragger = new Drag
-        dragger.init @element
+        dragger.init @container
 
     bind: (eventName, listener)=>
         @element.addEventListener eventName, listener

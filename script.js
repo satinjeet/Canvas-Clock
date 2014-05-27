@@ -47,13 +47,16 @@ CanvasH = (function() {
 
   CanvasH.prototype.element = null;
 
+  CanvasH.prototype.container = null;
+
   function CanvasH() {
     this.bind = __bind(this.bind, this);
     var dragger;
+    this.container = document.getElementById("clock");
     this.element = document.getElementById("myCanvas");
     this.context = this.element.getContext("2d");
     dragger = new Drag;
-    dragger.init(this.element);
+    dragger.init(this.container);
   }
 
   CanvasH.prototype.bind = function(eventName, listener) {
