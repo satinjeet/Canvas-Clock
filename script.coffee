@@ -152,6 +152,8 @@ class window.Clock
                 minutes: 90
                 hour: 70
                 seconds: 100
+        if typeof(@options.img) is "undefined"
+            @options.img = "roman"
         @init()
 
     init: =>
@@ -159,7 +161,7 @@ class window.Clock
         can.createClock()
         @backGround = new Image
         @backGround.onload = @readyImage
-        @backGround.src = "res/roman.png"
+        @backGround.src = @getImage()
         a = new Vertex @options.dimensions.height/2, @options.dimensions.width/2
         d = new Date
         @needles.seconds = new Seconds a, @options.needles.seconds, d.getSeconds()
@@ -167,6 +169,15 @@ class window.Clock
         @needles.hours = new Hours a, @options.needles.hour, d.getHours(), d.getMinutes()
         @update()
         setInterval @update, 1000
+
+    getImage: =>
+        switch @options.img
+            when "numbers"
+                return "res/numbers.jpg"
+            when "numbers_b"
+                return "res/number_bound.jpg"
+            else
+                return "res/roman.png"
 
     readyImage: =>
         @ready = true

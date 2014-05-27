@@ -274,6 +274,7 @@
       this.clear = __bind(this.clear, this);
       this.update = __bind(this.update, this);
       this.readyImage = __bind(this.readyImage, this);
+      this.getImage = __bind(this.getImage, this);
       this.init = __bind(this.init, this);
       if (typeof this.options.dimensions === "undefined") {
         this.options.dimensions = {
@@ -293,6 +294,9 @@
           seconds: 100
         };
       }
+      if (typeof this.options.img === "undefined") {
+        this.options.img = "roman";
+      }
       this.init();
     }
 
@@ -302,7 +306,7 @@
       can.createClock();
       this.backGround = new Image;
       this.backGround.onload = this.readyImage;
-      this.backGround.src = "res/roman.png";
+      this.backGround.src = this.getImage();
       a = new Vertex(this.options.dimensions.height / 2, this.options.dimensions.width / 2);
       d = new Date;
       this.needles.seconds = new Seconds(a, this.options.needles.seconds, d.getSeconds());
@@ -310,6 +314,17 @@
       this.needles.hours = new Hours(a, this.options.needles.hour, d.getHours(), d.getMinutes());
       this.update();
       return setInterval(this.update, 1000);
+    };
+
+    Clock.prototype.getImage = function() {
+      switch (this.options.img) {
+        case "numbers":
+          return "res/numbers.jpg";
+        case "numbers_b":
+          return "res/number_bound.jpg";
+        default:
+          return "res/roman.png";
+      }
     };
 
     Clock.prototype.readyImage = function() {
