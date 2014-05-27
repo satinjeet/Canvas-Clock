@@ -112,8 +112,6 @@ ClockMaths = (function() {
     if (width == null) {
       width = 1;
     }
-    can.context.shadowBlur = width;
-    can.context.shadowColor = "black";
     can.context.lineWidth = width;
     can.context.beginPath();
     can.context.moveTo(start.x, start.y);
