@@ -1,3 +1,24 @@
+class Drag
+  offX: null
+  offY: null
+
+  init: (@element) =>
+    @element.addEventListener 'mousedown', @mouseDown, false
+    window.addEventListener 'mouseup', @mouseUp, false
+
+  mouseUp: =>
+    window.removeEventListener 'mousemove', @move, true
+
+  mouseDown: (e)=>
+    @offY = e.clientY - parseInt @element.offsetTop
+    @offX = e.clientX - parseInt @element.offsetLeft
+    window.addEventListener 'mousemove', @move, true
+
+  move: (e)=>
+    @element.style.position = 'absolute'
+    @element.style.top = (e.clientY - @offY) + 'px'
+    @element.style.left = (e.clientX - @offX) + 'px'
+
 class CanvasH
     context: null
     element: null
@@ -8,6 +29,8 @@ class CanvasH
     constructor: ->
         @element = document.getElementById("myCanvas")
         @context = @element.getContext("2d")
+        dragger = new Drag
+        dragger.init @element
 
     on: (eventName, listener)=>
         @element.addEventListener eventName, listener
@@ -88,28 +111,46 @@ class Hours extends Minutes
     width: 3
 
     constructor: (@origin, @radius, @hourPassed, @minutePassed)->
-        @angle -= (@hourPassed * 30 + @minutePassed * 0.5)
+        @angle -= ((@hourPassed % 12) * 30 + @minutePassed * 0.5)
         can.on can.events.h, @angleUpdate
 
     angleUpdate: =>
         @angle -= 0.5
+
+class Clock
+    backGround : null
+    ready: false
+
+    constructor: ->
+        @backGround = new Image
+        @backGround.onload = =>
+            @ready = true
+        @backGround.src = "res/roman.png"
+
+    update: =>
+        if @ready
+            can.context.drawImage @backGround, 10, 10
+
 
 initCanvas = ->
     window.can = new CanvasH
 
 update = ->
     can.element.width = can.element.width;
+    clock.update();
     seconds.update()
     minutes.update()
     hours.update()
 
 window.addEventListener 'load', ->
     initCanvas()
-    window.a = new Vertex 300, 300
+    
+    window.a = new Vertex 125, 125
     d = new Date
     window.seconds = new Seconds a, 100, d.getSeconds()
     window.minutes = new Minutes a, 100, d.getMinutes()
     window.hours = new Hours a, 70, d.getHours(), d.getMinutes()
+    window.clock = new Clock
     
     update()
 
