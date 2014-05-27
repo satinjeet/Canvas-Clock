@@ -22,9 +22,6 @@ class Drag
 class CanvasH
     context: null
     element: null
-    events:
-        m: "minutePassed"
-        h: "hourPassed"
 
     constructor: ->
         @element = document.getElementById("myCanvas")
@@ -32,7 +29,7 @@ class CanvasH
         dragger = new Drag
         dragger.init @element
 
-    on: (eventName, listener)=>
+    bind: (eventName, listener)=>
         @element.addEventListener eventName, listener
 
     trigger: (eventName)->
@@ -77,6 +74,16 @@ class Needles extends ClockMaths
     angle: 0
     width: 1
 
+    events:
+        minutePassed: "minutePassed"
+        hourPassed: "hourPassed"
+
+    trigger: (eventName)=>
+        can.trigger eventName
+
+    bind: (eventName, listener)=>
+        can.bind eventName, listener
+
 class Seconds extends Needles
 
     constructor: (@origin, @radius, @value = 0)->
@@ -85,26 +92,26 @@ class Seconds extends Needles
     update: =>
         if @angle == -360
             @angle = 0
-            can.trigger can.events.m
+            @trigger @events.minutePassed
         @angle -= 6
         b = @CalculateSecondVertex @origin, @radius, @angle
-        @drawLine a, b, @width
+        @drawLine @origin, b, @width
 
 class Minutes extends Needles
     width: 3
 
     constructor: (@origin, @radius, @value = 0)->
         @angle -= @value * 6
-        can.on can.events.m, @angleUpdate
+        @bind @events.minutePassed, @angleUpdate
 
     angleUpdate: =>
         @angle -= 6
-        can.trigger can.events.h
+        @trigger @events.hourPassed
     update: =>
         if @angle == -360
             @angle = 0
         b = @CalculateSecondVertex @origin, @radius, @angle
-        @drawLine a, b, @width
+        @drawLine @origin, b, @width
 
 class Hours extends Minutes
 
@@ -112,7 +119,7 @@ class Hours extends Minutes
 
     constructor: (@origin, @radius, @hourPassed, @minutePassed)->
         @angle -= ((@hourPassed % 12) * 30 + @minutePassed * 0.5)
-        can.on can.events.h, @angleUpdate
+        @bind @events.hourPassed, @angleUpdate
 
     angleUpdate: =>
         @angle -= 0.5
@@ -120,39 +127,39 @@ class Hours extends Minutes
 class Clock
     backGround : null
     ready: false
+    needles: {}
 
     constructor: ->
+        @init()
+
+    init: =>
+        window.can = new CanvasH
         @backGround = new Image
         @backGround.onload = @readyImage
         @backGround.src = "res/roman.png"
+        a = new Vertex 125, 125
+        d = new Date
+        @needles.seconds = new Seconds a, 100, d.getSeconds()
+        @needles.minutes = new Minutes a, 100, d.getMinutes()
+        @needles.hours = new Hours a, 70, d.getHours(), d.getMinutes()
+        @update
+        
 
     readyImage: =>
         @ready = true
 
     update: =>
         if @ready
+            @clear()
             can.context.drawImage @backGround, 0, 0, 250, 250
+            @needles.seconds.update()
+            @needles.minutes.update()
+            @needles.hours.update()
 
-initCanvas = ->
-    window.can = new CanvasH
-
-update = ->
-    can.element.width = can.element.width;
-    clock.update()
-    seconds.update()
-    minutes.update()
-    hours.update()
+    clear: =>
+        can.element.width = can.element.width;
 
 window.addEventListener 'load', ->
-    initCanvas()
-    
-    window.a = new Vertex 125, 125
-    d = new Date
-    window.seconds = new Seconds a, 100, d.getSeconds()
-    window.minutes = new Minutes a, 100, d.getMinutes()
-    window.hours = new Hours a, 70, d.getHours(), d.getMinutes()
     window.clock = new Clock
-    
-    update()
 
-    setInterval(update, 1000);
+    setInterval(clock.update, 1000);
