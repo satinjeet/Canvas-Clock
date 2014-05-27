@@ -238,18 +238,19 @@ Clock = (function() {
 
   function Clock() {
     this.update = __bind(this.update, this);
+    this.readyImage = __bind(this.readyImage, this);
     this.backGround = new Image;
-    this.backGround.onload = (function(_this) {
-      return function() {
-        return _this.ready = true;
-      };
-    })(this);
+    this.backGround.onload = this.readyImage;
     this.backGround.src = "res/roman.png";
   }
 
+  Clock.prototype.readyImage = function() {
+    return this.ready = true;
+  };
+
   Clock.prototype.update = function() {
     if (this.ready) {
-      return can.context.drawImage(this.backGround, 10, 10);
+      return can.context.drawImage(this.backGround, 0, 0, 250, 250);
     }
   };
 

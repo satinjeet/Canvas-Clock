@@ -123,21 +123,22 @@ class Clock
 
     constructor: ->
         @backGround = new Image
-        @backGround.onload = =>
-            @ready = true
+        @backGround.onload = @readyImage
         @backGround.src = "res/roman.png"
+
+    readyImage: =>
+        @ready = true
 
     update: =>
         if @ready
-            can.context.drawImage @backGround, 10, 10
-
+            can.context.drawImage @backGround, 0, 0, 250, 250
 
 initCanvas = ->
     window.can = new CanvasH
 
 update = ->
     can.element.width = can.element.width;
-    clock.update();
+    clock.update()
     seconds.update()
     minutes.update()
     hours.update()
