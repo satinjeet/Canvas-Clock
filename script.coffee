@@ -15,7 +15,7 @@ class Drag
     window.addEventListener 'mousemove', @move, true
 
   move: (e)=>
-    @element.style.position = 'absolute'
+    @element.style.position = 'relative'
     @element.style.top = (e.clientY - @offY) + 'px'
     @element.style.left = (e.clientX - @offX) + 'px'
 
@@ -24,12 +24,19 @@ class CanvasH
     element: null
     container: null
 
-    constructor: ->
+    constructor: (@dimensions)->
         @container = document.getElementById("clock")
-        @element = document.getElementById("myCanvas")
-        @context = @element.getContext("2d")
+        @container.style.width = "#{@dimensions.width}px";
+        @container.style.height = "#{@dimensions.height}px";
         dragger = new Drag
         dragger.init @container
+
+    createClock: =>
+        @element = document.createElement("canvas");
+        @element.width = @dimensions.width
+        @element.height = @dimensions.height
+        @context = @element.getContext("2d")
+        @container.appendChild @element
 
     bind: (eventName, listener)=>
         @element.addEventListener eventName, listener
@@ -63,8 +70,6 @@ class ClockMaths
         return t
 
     drawLine: (start, end, width = 1)->
-        # can.context.shadowBlur = width+3;
-        # can.context.shadowColor="black";
         can.context.lineWidth = width
         can.context.beginPath()
         can.context.moveTo(start.x, start.y)
@@ -132,24 +137,34 @@ class Hours extends Minutes
     angleUpdate: =>
         @angle -= 0.5
 
-class Clock
+class window.Clock
     backGround : null
     ready: false
     needles: {}
 
-    constructor: ->
-        window.addEventListener 'load', @init
+    constructor: (@options = {})->
+        if typeof(@options.dimensions) is "undefined"
+            @options.dimensions = {height: 250, width: 250}
+        else
+            @options.dimensions = {height: @options.dimensions, width: @options.dimensions}
+        if typeof(@options.needles) is "undefined"
+            @options.needles = 
+                minutes: 90
+                hour: 70
+                seconds: 100
+        @init()
 
     init: =>
-        window.can = new CanvasH
+        window.can = new CanvasH @options.dimensions
+        can.createClock()
         @backGround = new Image
         @backGround.onload = @readyImage
         @backGround.src = "res/roman.png"
-        a = new Vertex 125, 125
+        a = new Vertex @options.dimensions.height/2, @options.dimensions.width/2
         d = new Date
-        @needles.seconds = new Seconds a, 100, d.getSeconds()
-        @needles.minutes = new Minutes a, 100, d.getMinutes()
-        @needles.hours = new Hours a, 70, d.getHours(), d.getMinutes()
+        @needles.seconds = new Seconds a, @options.needles.seconds, d.getSeconds()
+        @needles.minutes = new Minutes a, @options.needles.minutes, d.getMinutes()
+        @needles.hours = new Hours a, @options.needles.hour, d.getHours(), d.getMinutes()
         @update()
         setInterval @update, 1000
 
@@ -159,13 +174,11 @@ class Clock
     update: =>
         if @ready
             @clear()
-            can.context.drawImage @backGround, 0, 0, 250, 250
+            can.context.drawImage @backGround, 0, 0, @options.dimensions.height, @options.dimensions.width
             @needles.seconds.update()
             @needles.minutes.update()
             @needles.hours.update()
 
     clear: =>
         can.element.width = can.element.width;
-
-window.clock = new Clock
     

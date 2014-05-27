@@ -8,8 +8,8 @@
             border-color: rgb(222, 184, 135);
             box-shadow: 2px 5px 5px 2px rgb(120,120,120);
             border-radius: 50px 0px 50px 0px;
-            width: 250px;
-            height: 250px;
+/*            width: 250px;
+            height: 250px;*/
             z-index: 10000;
         }
     </style>
@@ -17,9 +17,22 @@
 </head>
 <body>
     <div id="clock">
-        <canvas width="250" height="250" id="myCanvas"></canvas>
-        <img src="res/roman.png" hidden/>
     </div>
 <!-- image source goes to -->
+    <script>
+        // window.addEventListener('load', function(){
+        //     new Clock;
+        // });
+        window.addEventListener('load', function(){
+            new Clock({
+                dimensions: 400,
+                needles: {
+                    minutes: 150,
+                    hour: 100,
+                    seconds: 190 
+                }
+            });
+        });
+    </script>
 </body>
 </html>
