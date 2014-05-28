@@ -26,8 +26,8 @@ class CanvasH
 
     constructor: (@dimensions)->
         @container = document.getElementById("clock")
-        @container.style.width = "#{@dimensions.width + 10}px";
-        @container.style.height = "#{@dimensions.height + 10}px";
+        @container.style.width = "#{@dimensions.width}px";
+        @container.style.height = "#{@dimensions.height}px";
         dragger = new Drag
         dragger.init @container
 

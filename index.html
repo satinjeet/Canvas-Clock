@@ -8,13 +8,11 @@
             border-color: rgb(222, 184, 135);
             box-shadow: 2px 5px 5px 2px rgb(120,120,120);
             border-radius: 50px 0px 50px 0px;
-/*            width: 250px;
-            height: 250px;*/
             z-index: 10000;
             overflow: hidden;
         }
     </style>
-    <script src="script.min.js"></script>
+    <script src="script.js"></script>
 </head>
 <body>
     <div id="clock">
@@ -26,13 +24,13 @@
         // });
         window.addEventListener('load', function(){
             new Clock({
-                dimensions: 400,
+                dimensions: 200,
                 needles: {
-                    minutes: 150,
-                    hour: 100,
-                    seconds: 150 
+                    minutes: 75,
+                    hour: 60,
+                    seconds: 80 
                 },
-                img: "numbers_"
+                img: "numbers_b"
             });
         });
     </script>
