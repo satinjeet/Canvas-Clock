@@ -58,6 +58,7 @@
       this.element.id = "clock";
       this.element.width = this.dimensions.width;
       this.element.height = this.dimensions.height;
+      this.element.style.position = 'absolute';
       this.context = this.element.getContext("2d");
       body = document.body;
       body.insertBefore(this.element, body.firstChild);

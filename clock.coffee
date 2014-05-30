@@ -29,6 +29,7 @@ class CanvasH
         @element.id = "clock"
         @element.width = @dimensions.width
         @element.height = @dimensions.height
+        @element.style.position = 'absolute'
         @context = @element.getContext("2d")
         
         body = document.body
