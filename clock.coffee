@@ -15,7 +15,7 @@ class Drag
     window.addEventListener 'mousemove', @move, true
 
   move: (e)=>
-    @element.style.position = 'relative'
+    @element.style.position = 'absolute'
     @element.style.top = (e.clientY - @offY) + 'px'
     @element.style.left = (e.clientX - @offX) + 'px'
 
@@ -25,18 +25,17 @@ class CanvasH
     container: null
 
     constructor: (@dimensions)->
-        @container = document.getElementById("clock")
-        @container.style.width = "#{@dimensions.width}px";
-        @container.style.height = "#{@dimensions.height}px";
-        dragger = new Drag
-        dragger.init @container
-
-    createClock: =>
-        @element = document.createElement("canvas");
+        @element = document.createElement("canvas")
+        @element.id = "clock"
         @element.width = @dimensions.width
         @element.height = @dimensions.height
+        @element.style.position = 'absolute'
         @context = @element.getContext("2d")
-        @container.appendChild @element
+        
+        body = document.body
+        body.insertBefore @element, body.firstChild
+        dragger = new Drag
+        dragger.init @element
 
     bind: (eventName, listener)=>
         @element.addEventListener eventName, listener
@@ -154,11 +153,10 @@ class window.Clock
                 seconds: 100
         if typeof(@options.img) is "undefined"
             @options.img = "roman"
-        @init()
+        window.addEventListener "load", @init
 
     init: =>
         window.can = new CanvasH @options.dimensions
-        can.createClock()
         @backGround = new Image
         @backGround.onload = @readyImage
         @backGround.src = @getImage()
