@@ -12,26 +12,18 @@
             overflow: hidden;
         }
     </style>
-    <script src="clock.min.js"></script>
+    <script src="clock.js"></script>
 </head>
 <body>
-    <div id="clock">
-    </div>
-<!-- image source goes to -->
     <script>
-        // window.addEventListener('load', function(){
-        //     new Clock;
-        // });
-        window.addEventListener('load', function(){
-            new Clock({
-                dimensions: 200,
-                needles: {
-                    minutes: 75,
-                    hour: 60,
-                    seconds: 80 
-                },
-                img: "numbers_b"
-            });
+        new Clock({
+            dimensions: 200,
+            needles: {
+                minutes: 75,
+                hour: 60,
+                seconds: 80 
+            },
+            img: "numbers_b"
         });
     </script>
 </body>
